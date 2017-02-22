@@ -8,7 +8,7 @@ public class BootReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        AtWork.log("BootReceiver.onRecieve");
+        AtWork.log("BootReceiver.onReceive");
         if (intent.getAction().equals("android.intent.action.BOOT_COMPLETED")) {
             AtWork.setAlarm(context);
             AtWork.sendNotification(context, "Boot receiver");

@@ -26,7 +26,7 @@ public class AtWorkAlarmService extends IntentService {
             AtWork.sendText(this, loc);
         }
         else {
-            AtWork.setLocatonRequest(this);
+            AtWork.setLocationRequest(this);
         }
         AtWorkAlarmReceiver.completeWakefulIntent(intent);
     }

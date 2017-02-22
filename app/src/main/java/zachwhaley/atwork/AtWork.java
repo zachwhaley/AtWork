@@ -63,7 +63,7 @@ public class AtWork {
         alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, alarmIntent);
     }
 
-    public static void setLocatonRequest(Context context) {
+    public static void setLocationRequest(Context context) {
         AtWork.log("AtWork.setLocationRequest");
         Intent intent = new Intent(context, AtWorkLocationReceiver.class);
         PendingIntent locationIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
