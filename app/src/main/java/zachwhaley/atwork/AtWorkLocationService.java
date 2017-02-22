@@ -13,6 +13,7 @@ public class AtWorkLocationService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         AtWork.log("AtWorkLocationService.onHandleIntent");
+        // TODO: Figure out which one of these values is the location object.
         Bundle bundle = intent.getExtras();
         for (String key : bundle.keySet()) {
             AtWork.log(bundle.get(key).toString());
