@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Fill these in with your own stuff -->
+    <string name="phone_number"></string>
+    <string name="latitude"></string>
+    <string name="longitude"></string>
+</resources>

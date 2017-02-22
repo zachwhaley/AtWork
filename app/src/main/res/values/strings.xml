@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">At Work</string>
+    <string name="text_message">At work 😀</string>
+    <string name="not_text_message">Not at work 😞</string>
+</resources>
