@@ -6,8 +6,8 @@ import android.os.Bundle;
 
 public class AtWorkLocationService extends IntentService {
 
-    public AtWorkLocationService(String name) {
-        super(name);
+    public AtWorkLocationService() {
+        super("AtWorkLocationService");
     }
 
     @Override
