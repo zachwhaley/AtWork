@@ -10,7 +10,6 @@ class BootReceiver : BroadcastReceiver() {
         AtWork.log("BootReceiver.onReceive")
         if (intent.action == "android.intent.action.BOOT_COMPLETED") {
             AtWork.setAlarm(context)
-            AtWork.sendNotification(context, "Boot receiver")
         }
     }
 }

@@ -30,6 +30,7 @@
         <service android:name=".AtWorkAlarmService" />
         <receiver android:name=".AtWorkLocationReceiver" />
         <service android:name=".AtWorkLocationService" />
+        <service android:name=".AtWorkNotificationService" />
     </application>
 
 </manifest>

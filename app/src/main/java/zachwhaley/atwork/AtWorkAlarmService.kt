@@ -20,7 +20,11 @@ class AtWorkAlarmService : IntentService("AtWorkAlarmService") {
         }
 
         if (loc != null) {
-            AtWork.sendText(this, loc)
+            if (AtWork.closeToWork(this, loc)) {
+                AtWork.sendText(this)
+            } else {
+                AtWork.sendNotification(this)
+            }
         } else {
             AtWork.setLocationRequest(this)
         }

@@ -5,17 +5,14 @@ import android.app.Notification
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
+import android.content.Context.NOTIFICATION_SERVICE
 import android.content.Intent
-import android.content.res.Resources
 import android.location.Location
 import android.location.LocationManager
-import android.support.v7.app.NotificationCompat
+import android.support.v4.app.NotificationCompat
 import android.telephony.SmsManager
 import android.util.Log
-
 import java.util.Calendar
-
-import android.content.Context.NOTIFICATION_SERVICE
 
 object AtWork {
     val LOG = "AtWork"
@@ -28,26 +25,46 @@ object AtWork {
         Log.e(LOG, msg ?: "null")
     }
 
-    fun sendText(context: Context, location: Location) {
+    fun closeToWork(context: Context, location: Location): Boolean {
         val res = context.resources
-
         val workLoc = Location(AtWork.LOG)
+
         workLoc.latitude = java.lang.Float.parseFloat(res.getString(R.string.latitude)).toDouble()
         workLoc.longitude = java.lang.Float.parseFloat(res.getString(R.string.longitude)).toDouble()
+        return location.distanceTo(workLoc) <= 200
+    }
 
-        if (location.distanceTo(workLoc) <= 200) {
-            try {
-                val smsMgr = SmsManager.getDefault()
-                smsMgr.sendTextMessage(
-                        res.getString(R.string.phone_number), null,
-                        res.getString(R.string.text_message), null, null)
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
+    fun sendText(context: Context) {
+        val res = context.resources
 
-        } else {
-            sendNotification(context, res.getString(R.string.not_text_message))
+        try {
+            val smsMgr = SmsManager.getDefault()
+            smsMgr.sendTextMessage(
+                    res.getString(R.string.phone_number), null,
+                    res.getString(R.string.text_message), null, null)
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
+    }
+
+    fun sendNotification(context: Context) {
+        val res = context.resources
+        val msg = res.getString(R.string.not_text_message)
+        val yes = res.getString(R.string.yes_message)
+
+        val actionIntent = Intent(context, AtWorkNotificationService::class.java)
+        actionIntent.action = yes
+        val pendingAction = PendingIntent.getService(context, 0, actionIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+        val action = NotificationCompat.Action.Builder(0, yes, pendingAction).build()
+
+        val notification = NotificationCompat.Builder(context)
+                .setSmallIcon(R.drawable.ic_stat_name)
+                .setContentTitle(AtWork.LOG)
+                .setContentText(msg)
+                .addAction(action)
+                .build()
+        val notificationManager = context.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.notify(1, notification)
     }
 
     fun setAlarm(context: Context) {
@@ -76,16 +93,5 @@ object AtWork {
             err(e.message)
         }
 
-    }
-
-    fun sendNotification(context: Context, msg: String) {
-        AtWork.log("AtWork.sendNotification")
-        val notification = NotificationCompat.Builder(context)
-                .setSmallIcon(R.drawable.ic_stat_name)
-                .setContentTitle(AtWork.LOG)
-                .setContentText(msg)
-                .build()
-        val notificationManager = context.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.notify(1, notification)
     }
 }
