@@ -11,6 +11,17 @@ class AtWorkAlarmService : IntentService("AtWorkAlarmService") {
 
     override fun onHandleIntent(intent: Intent?) {
         AtWork.log("AtWorkAlarmService.onHandleIntent")
+        intent?.let {
+            when (it.action) {
+                "Morning Alarm" -> handleMorningAlarm()
+                "Evening Alarm" -> handleEveningAlarm()
+                else -> AtWork.err("Unknown alarm")
+            }
+        }
+        WakefulBroadcastReceiver.completeWakefulIntent(intent)
+    }
+
+    fun handleMorningAlarm() {
         val locationManager = this.getSystemService(Context.LOCATION_SERVICE) as LocationManager
         var loc: Location? = null
         try {
@@ -21,13 +32,16 @@ class AtWorkAlarmService : IntentService("AtWorkAlarmService") {
 
         if (loc != null) {
             if (AtWork.closeToWork(this, loc)) {
-                AtWork.sendText(this)
+                AtWork.sendText(this, AtWork.AT_WORK_A)
             } else {
-                AtWork.sendNotification(this)
+                AtWork.sendNotification(this, AtWork.AT_WORK_Q, "Yes")
             }
         } else {
             AtWork.setLocationRequest(this)
         }
-        WakefulBroadcastReceiver.completeWakefulIntent(intent)
+    }
+
+    fun handleEveningAlarm() {
+        AtWork.sendNotification(this, AtWork.LEAVING_Q, "Yes")
     }
 }

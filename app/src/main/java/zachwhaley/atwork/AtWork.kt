@@ -1,7 +1,6 @@
 package zachwhaley.atwork
 
 import android.app.AlarmManager
-import android.app.Notification
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
@@ -16,6 +15,12 @@ import java.util.Calendar
 
 object AtWork {
     val LOG = "AtWork"
+
+    val AT_WORK_Q = "Are you at work? 😕"
+    val AT_WORK_A = "At work 😘"
+
+    val LEAVING_Q = "Are you leaving? 😕"
+    val LEAVING_A = "Leaving 😀"
 
     fun log(msg: String?) {
         Log.d(LOG, msg ?: "null")
@@ -34,50 +39,62 @@ object AtWork {
         return location.distanceTo(workLoc) <= 200
     }
 
-    fun sendText(context: Context) {
+    fun sendText(context: Context, message: String) {
         val res = context.resources
 
         try {
             val smsMgr = SmsManager.getDefault()
-            smsMgr.sendTextMessage(
-                    res.getString(R.string.phone_number), null,
-                    res.getString(R.string.text_message), null, null)
+            val number = res.getString(R.string.phone_number)
+            smsMgr.sendTextMessage(number, null, message, null, null)
         } catch (e: Exception) {
             e.printStackTrace()
         }
     }
 
-    fun sendNotification(context: Context) {
-        val res = context.resources
-        val msg = res.getString(R.string.not_text_message)
-        val yes = res.getString(R.string.yes_message)
-
+    fun sendNotification(context: Context, question: String, answer: String) {
         val actionIntent = Intent(context, AtWorkNotificationService::class.java)
-        actionIntent.action = yes
+        actionIntent.action = question
         val pendingAction = PendingIntent.getService(context, 0, actionIntent, PendingIntent.FLAG_UPDATE_CURRENT)
-        val action = NotificationCompat.Action.Builder(0, yes, pendingAction).build()
+        val action = NotificationCompat.Action.Builder(0, answer, pendingAction).build()
 
         val notification = NotificationCompat.Builder(context)
                 .setSmallIcon(R.drawable.ic_stat_name)
                 .setContentTitle(AtWork.LOG)
-                .setContentText(msg)
+                .setContentText(question)
                 .addAction(action)
                 .build()
         val notificationManager = context.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.notify(1, notification)
     }
 
-    fun setAlarm(context: Context) {
+    fun setAlarms(context: Context) {
         AtWork.log("AtWork.setAlarm")
-        val intent = Intent(context, AtWorkAlarmReceiver::class.java)
-        val alarmIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
-
-        // Set the alarm to start at approximately 9:00am
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val calendar = Calendar.getInstance()
-        calendar.timeInMillis = System.currentTimeMillis()
-        calendar.set(Calendar.HOUR_OF_DAY, 9)
-        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, AlarmManager.INTERVAL_DAY, alarmIntent)
+
+        // Set alarm at approximately 9:00am
+        val morningIntent = Intent(context, AtWorkAlarmReceiver::class.java)
+        morningIntent.action = "Morning Alarm"
+        val morningPIntent = PendingIntent.getBroadcast(context, 0, morningIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+        val morning = Calendar.getInstance()
+        morning.timeInMillis = System.currentTimeMillis()
+        morning.set(Calendar.HOUR_OF_DAY, 9)
+        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP,
+                                         morning.timeInMillis,
+                                         AlarmManager.INTERVAL_DAY,
+                                         morningPIntent)
+
+        // Set alarm at approximately 4:30pm
+        val eveningIntent = Intent(context, AtWorkAlarmReceiver::class.java)
+        morningIntent.action = "Evening Alarm"
+        val eveningPIntent = PendingIntent.getBroadcast(context, 0, eveningIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+        val evening = Calendar.getInstance()
+        evening.timeInMillis = System.currentTimeMillis()
+        evening.set(Calendar.HOUR_OF_DAY, 16)
+        evening.set(Calendar.MINUTE, 30)
+        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP,
+                                         evening.timeInMillis,
+                                         AlarmManager.INTERVAL_DAY,
+                                         eveningPIntent)
     }
 
     fun setLocationRequest(context: Context) {

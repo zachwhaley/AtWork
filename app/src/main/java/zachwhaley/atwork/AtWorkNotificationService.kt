@@ -9,13 +9,16 @@ class AtWorkNotificationService : IntentService("AtWorkNotificationService") {
     override fun onHandleIntent(intent: Intent?) {
         AtWork.log("Handle Notification")
         intent?.let {
-            val yes = this.resources.getString(R.string.yes_message)
             when (it.action) {
-                yes -> {
-                    AtWork.log("Ok button pressed")
+                AtWork.AT_WORK_Q -> {
                     val notificationManager = this.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
                     notificationManager.cancel(1)
-                    AtWork.sendText(this)
+                    AtWork.sendText(this, AtWork.AT_WORK_A)
+                }
+                AtWork.LEAVING_Q -> {
+                    val notificationManager = this.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+                    notificationManager.cancel(1)
+                    AtWork.sendText(this, AtWork.LEAVING_A)
                 }
                 else -> {
                     AtWork.err("No action found")

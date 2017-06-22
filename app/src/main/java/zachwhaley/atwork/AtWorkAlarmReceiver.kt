@@ -8,7 +8,9 @@ class AtWorkAlarmReceiver : WakefulBroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
         AtWork.log("AtWorkAlarmReceiver.onReceive")
+
         val alarmService = Intent(context, AtWorkAlarmService::class.java)
+        alarmService.action = intent.action
         WakefulBroadcastReceiver.startWakefulService(context, alarmService)
     }
 }
