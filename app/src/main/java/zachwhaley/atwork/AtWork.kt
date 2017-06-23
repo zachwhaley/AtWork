@@ -68,13 +68,13 @@ object AtWork {
     }
 
     fun setAlarms(context: Context) {
-        AtWork.log("AtWork.setAlarm")
+        AtWork.log("AtWork.setAlarms")
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
         // Set alarm at approximately 9:00am
         val morningIntent = Intent(context, AtWorkAlarmReceiver::class.java)
         morningIntent.action = "Morning Alarm"
-        val morningPIntent = PendingIntent.getBroadcast(context, 0, morningIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+        val morningPIntent = PendingIntent.getBroadcast(context, 1, morningIntent, PendingIntent.FLAG_UPDATE_CURRENT)
         val morning = Calendar.getInstance()
         morning.timeInMillis = System.currentTimeMillis()
         morning.set(Calendar.HOUR_OF_DAY, 9)
@@ -85,8 +85,8 @@ object AtWork {
 
         // Set alarm at approximately 4:30pm
         val eveningIntent = Intent(context, AtWorkAlarmReceiver::class.java)
-        morningIntent.action = "Evening Alarm"
-        val eveningPIntent = PendingIntent.getBroadcast(context, 0, eveningIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+        eveningIntent.action = "Evening Alarm"
+        val eveningPIntent = PendingIntent.getBroadcast(context, 2, eveningIntent, PendingIntent.FLAG_UPDATE_CURRENT)
         val evening = Calendar.getInstance()
         evening.timeInMillis = System.currentTimeMillis()
         evening.set(Calendar.HOUR_OF_DAY, 16)
